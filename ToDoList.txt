@@ -1,19 +1,19 @@
 
 Indización 
 
-1. Crear coleccion con N(docId),AVGLEN, ruta absoluta.
-	1.1. Para cada colección crear estructura de documentos que tiene DocId, ruta relativa, longitud, norma.
-	1.2. Crear diccionario de palabras para cada documento.
-	1.3  Crear el diccionario global, agregan palabras que no estén y se aumenta Ni, aun no se sabe el idf, 
-	     y se le hace un enlace a su posting.
-	1.4  Crear posting, agregar docId, frecuencia del termino en el doc, y peso que todavía no se sabrá.
+1. Crear coleccion con N(docId),AVGLEN, ruta absoluta. LISTO
+	1.1. Para cada colección crear estructura de documentos que tiene DocId, ruta relativa, longitud, norma.LISTO
+	1.2. Crear diccionario de palabras para cada documento. LISTO
+	1.3  Crear el diccionario global, agregan palabras que no estén y se aumenta Ni, aun no se sabe el idf,   LISTO
+	     y se le hace un enlace a su posting. 
+	1.4  Crear posting, agregar docId, frecuencia del termino en el doc, y peso que todavía no se sabrá.  LISTO
 	     Posting es un dicc con valor lista, [(doc1,long,peso),(doc2,long,peso),...]
-	1.5  Al mismo tiempo se aumenta la laongitud en la estructura para documentos, se suma cada frecuencia
+	1.5  Al mismo tiempo se aumenta la laongitud en la estructura para documentos, se suma cada frecuencia  LISTO
              de cada termino.
-	1.6  De una vez cuando ya tenga la longitud del doc, se lo sumo al AVLEN de la coleccion, aumentar n 
+	1.6  De una vez cuando ya tenga la longitud del doc, se lo sumo al AVLEN de la coleccion, aumentar n    LISTO
 	     por cada doc procesado.
 
-2. Regex para extraer los textos de los xml.
+2. Regex para extraer los textos de los xml. LISTO
 (Para este punto los datos como Ni y N para hacer idf están listos, luego ya tendria frec e idf para el peso)
 (Para la norma, en recorrido del dicc, ya que saqué el peso, lo voy sumando al cuadrado en documentos ver-->1.1)
 3. Funcionalidad de modelo BM25.
