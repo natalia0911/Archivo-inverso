@@ -11,6 +11,7 @@
 import re
 from unicodedata import normalize
 from pathlib import Path
+from math import log
 
 def formatearTexto(ruta):
     '''
@@ -105,9 +106,81 @@ def modificarColeccion(longitudTotal):
     global coleccion
     coleccion['AvgLen'] += longitudTotal
     coleccion["N"]+=1  #Aumenta N por cada doc procesado
-    
-    
 
+    
+def getNColeccion():
+    global coleccion
+    return coleccion["N"]
+
+
+def avgColeccion():
+    '''
+    Calcular el promedio de longitud de todos los documentos
+    '''
+    global coleccion
+    coleccion['AvgLen'] =  coleccion['AvgLen']/coleccion["N"]
+
+
+
+
+def idf_ijColeccion(N, ni):
+    '''
+    Dado un N y un ni devuelve el resultado del inverse document frequency
+    '''
+    return log(N/ni,2)
+
+
+
+def calcularIdf_ij(N):
+    '''
+    Recorre el diccionario de la colección para poder asignar el idf correspondiente
+    '''
+    global diccionarioGlobal
+    
+    
+    for word in diccionarioGlobal:
+
+        ni = diccionarioGlobal[word]["Ni"]
+        diccionarioGlobal[word]['Idf'] = idf_ijColeccion(N, ni)
+        
+    return diccionarioGlobal
+
+
+
+def calcularPeso(idf_ij,freq_ij):
+    '''
+    Calcular el peso de un termino 
+    '''
+
+    return log(1+freq_ij,2)*idf_ij
+
+def procesarDiccColeccion():
+    '''
+    Estructura de los Postings: [[docId, freq_ij, peso]]
+    '''
+    global diccionarioGlobal
+    
+    
+    for word in diccionarioGlobal:
+        idf_ij = diccionarioGlobal[word]["Idf"]
+        postings = diccionarioGlobal[word]["Postings"]
+        for post in postings:
+            peso = calcularPeso(idf_ij,post[1])  #Se le pasa el idf y la frecuencia del termino en el documento
+            post[2] = peso
+
+    a=0
+    for word in diccionarioGlobal:
+        if a==6:
+            print(word)
+            print(diccionarioGlobal[word]["Ni"])
+            print(diccionarioGlobal[word]["Idf"])
+            print(diccionarioGlobal[word]["Postings"])
+        a+=1
+            
+    return diccionarioGlobal
+
+
+    
 def tomarArchivos():
     global docId
     
@@ -119,10 +192,15 @@ def tomarArchivos():
         texto = formatearTexto(path)
         dicc = countWords(texto)
         diccGlobal = insertarEndiccionarioGlobal(dicc,docIdentifier)
-        longitudTotal = getFrecuenciaDocumento(docIdentifier)
-        modificarColeccion(longitudTotal)
-        #print(diccGlobal)
+        longitudTotal = getFrecuenciaDocumento(docIdentifier)  #Longitud total del documento actual procesado
+        modificarColeccion(longitudTotal)                      #Se suma a la longitud de la colecci[on
         docId += 1
+
+    # Calculos de los modelos
+    avgColeccion()
+    N = getNColeccion()
+    calcularIdf_ij(N)   #Recorre el diccionario para calcular idfs
+    procesarDiccColeccion()
 
         
 
