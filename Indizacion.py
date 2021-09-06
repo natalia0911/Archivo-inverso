@@ -12,7 +12,24 @@ import re
 from unicodedata import normalize
 from pathlib import Path
 from math import log
+from math import sqrt
+import json
+import os
 
+
+
+
+def leerStopWords(ruta):
+    '''
+Leer stopwords y llenar la lista de stopwords global
+    '''
+    global stopWords
+    
+    with open(ruta,"r") as archivo:
+        for linea in archivo:
+            stopWords.append(linea.rstrip('\n').rstrip('\t').rstrip('\b'))
+
+        
 def formatearTexto(ruta):
     '''
     Quita las etiquetas xml para extraer el texto, quita caracteres,convierte a minuscula
@@ -26,7 +43,7 @@ def formatearTexto(ruta):
     caracteres = "!?'-[]()\/''=`,:~}{" #-> caracteres innecesarios que se quitan 
     texto = ''.join(x for x in texto if x not in caracteres)
 
-    
+
     texto = deleteAccents(texto)
     return quitarPreposiciones(texto)
     
@@ -61,12 +78,15 @@ def countWords(words):
     Recorre las palabras, si no existen con anterioridad las agrega al dicciionario y aumenta la frecuencia de cada palabra.
     Diccionario para cada documento
     '''
+    global stopWords
+    
     frequency = {} # Palabra, frecuencia
     for word in words:
-        if word in frequency and word != '':
-            frequency[word] +=1
-        else:
-            frequency[word]=1
+        if  word != '' and word not in stopWords:
+            if word in frequency :
+                frequency[word] += 1
+            else:
+                frequency[word] = 1
             
     return frequency
 
@@ -91,7 +111,7 @@ def insertarEndiccionarioGlobal(dicc,docId):
 
 def insertarEnDocumentos(path,docId):
     
-    documentos[docId] = dict({'path': path, 'length': 0, 'norma': 0})
+    documentos[docId] = dict({'path': str(path), 'length': 0, 'norma': 0})
     
 def modificarDocumentos(docId,frecuencia):
     global documentos
@@ -104,7 +124,8 @@ def getFrecuenciaDocumento(docId):
 
 def modificarColeccion(longitudTotal):
     global coleccion
-    coleccion['AvgLen'] += longitudTotal
+
+    coleccion["AvgLen"] += longitudTotal
     coleccion["N"]+=1  #Aumenta N por cada doc procesado
 
     
@@ -122,28 +143,11 @@ def avgColeccion():
 
 
 
-
 def idf_ijColeccion(N, ni):
     '''
     Dado un N y un ni devuelve el resultado del inverse document frequency
     '''
     return log(N/ni,2)
-
-
-
-def calcularIdf_ij(N):
-    '''
-    Recorre el diccionario de la colección para poder asignar el idf correspondiente
-    '''
-    global diccionarioGlobal
-    
-    
-    for word in diccionarioGlobal:
-
-        ni = diccionarioGlobal[word]["Ni"]
-        diccionarioGlobal[word]['Idf'] = idf_ijColeccion(N, ni)
-        
-    return diccionarioGlobal
 
 
 
@@ -154,38 +158,88 @@ def calcularPeso(idf_ij,freq_ij):
 
     return log(1+freq_ij,2)*idf_ij
 
-def procesarDiccColeccion():
+
+
+def normas():
+    '''
+    Una vez que se tiene la suma de los pesos al cuadrado se calcula la raíz 
+    '''
+    global documentos
+    
+    for doc in documentos:
+        documentos[doc]["norma"] = sqrt(documentos[doc]["norma"])
+        
+
+
+def procesarDiccColeccion(N):
     '''
     Estructura de los Postings: [[docId, freq_ij, peso]]
     '''
     global diccionarioGlobal
+    global documentos
     
     
     for word in diccionarioGlobal:
+        #calcularIdf_ij 
+        ni = diccionarioGlobal[word]["Ni"]
+        diccionarioGlobal[word]['Idf'] = idf_ijColeccion(N, ni)
+        #CalcularPeso
         idf_ij = diccionarioGlobal[word]["Idf"]
         postings = diccionarioGlobal[word]["Postings"]
         for post in postings:
             peso = calcularPeso(idf_ij,post[1])  #Se le pasa el idf y la frecuencia del termino en el documento
             post[2] = peso
+            documentos[post[0]]["norma"] = peso**2    #Se va sumando a la norma
 
+    normas()
+
+
+    #----------------Pruebas----------------------------#
+    '''
     a=0
     for word in diccionarioGlobal:
-        if a==6:
+        if a==5:
             print(word)
             print(diccionarioGlobal[word]["Ni"])
             print(diccionarioGlobal[word]["Idf"])
             print(diccionarioGlobal[word]["Postings"])
         a+=1
-            
+        
+    #print(documentos)
     return diccionarioGlobal
+    '''
+
+def guardarIndice(rutaIndice,coleccion,documentos,diccionarioGlobal):
+    if os.path.exists(rutaIndice):
+        crearIndice(rutaIndice,coleccion,documentos,diccionarioGlobal)
+
+    else:
+        os.makedirs(rutaIndice)
+        crearIndice(rutaIndice,coleccion,documentos,diccionarioGlobal)
 
 
+
+def crearIndice(rutaIndice,coleccion,documentos,diccionarioGlobal):
+    with open(rutaIndice+'/'+'coleccion.json', 'w') as c:
+            json.dump(coleccion, c)
     
-def tomarArchivos():
+    with open(rutaIndice+'/'+'documentos.json', 'w') as doc:
+            json.dump(documentos, doc)
+    
+    with open(rutaIndice+'/'+'diccionarioGlobal.json', 'w') as dic:
+            json.dump(diccionarioGlobal, dic)
+    
+def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):
+    
     global docId
+    global documentos
+    global diccionarioGlobal
+    global coleccion
     
-    #ruta = input("Ingrese la ruta del archivo: ")
-    pathlist = Path("D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/xml-es").glob('**/*.xml')
+    coleccion['rutaAbsoluta']= rutaColeccion
+    leerStopWords(rutaStopwords)
+    pathlist = Path(rutaColeccion).glob('**/*.xml')
+    a = True
     for path in pathlist:
         docIdentifier = "doc"+str(docId)
         insertarEnDocumentos(path,docIdentifier)
@@ -199,22 +253,35 @@ def tomarArchivos():
     # Calculos de los modelos
     avgColeccion()
     N = getNColeccion()
-    calcularIdf_ij(N)   #Recorre el diccionario para calcular idfs
-    procesarDiccColeccion()
+    procesarDiccColeccion(N)
+
+    guardarIndice(rutaIndice,coleccion,documentos,diccionarioGlobal)
+    
+    
+    
 
         
 
 if __name__ == '__main__':
 
     #Luego vemos como pasarlo a bonito
+    global stopWords
     global docId
     global documentos
     global diccionarioGlobal
     global coleccion
-    
+
+    stopWords = []
     docId = 0
     coleccion = {'N' :  0, 'AvgLen':0, 'rutaAbsoluta': ''}  
     documentos = {}            #DocId, ruta relativa, longitud, norma.
     diccionarioGlobal = {}     # Ni, Idfs, *postings ---> [(doc1,long,peso),(doc2,long,peso),...]
-    tomarArchivos()
+
+    #OJO, PEDIR ESTOO
+    rutaColeccion = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/xml-es"
+    rutaStopwords = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/StopWords.txt"
+    rutaIndice = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/Indice" 
+    
+    tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice)
+    
 
