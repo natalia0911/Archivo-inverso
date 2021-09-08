@@ -17,6 +17,17 @@ import json
 import os
 
 
+global stopWords
+global docId
+global documentos
+global diccionarioGlobal
+global coleccion
+
+stopWords = []
+docId = 0
+coleccion = {'N' :  0, 'AvgLen':0, 'rutaAbsoluta': ''}  
+documentos = {}            #DocId, ruta relativa, longitud, norma.
+diccionarioGlobal = {}     # Ni, Idfs, *postings ---> [(doc1,long,peso),(doc2,long,peso),...]
 
 
 def leerStopWords(ruta):
@@ -220,13 +231,13 @@ def guardarIndice(rutaIndice,coleccion,documentos,diccionarioGlobal):
 
 
 def crearIndice(rutaIndice,coleccion,documentos,diccionarioGlobal):
-    with open(rutaIndice+'/'+'coleccion.json', 'w') as c:
+    with open(rutaIndice+'-'+'coleccion.json', 'w') as c:
             json.dump(coleccion, c)
     
-    with open(rutaIndice+'/'+'documentos.json', 'w') as doc:
+    with open(rutaIndice+'-'+'documentos.json', 'w') as doc:
             json.dump(documentos, doc)
     
-    with open(rutaIndice+'/'+'diccionarioGlobal.json', 'w') as dic:
+    with open(rutaIndice+'-'+'diccionarioGlobal.json', 'w') as dic:
             json.dump(diccionarioGlobal, dic)
     
 def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):
@@ -261,7 +272,7 @@ def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):
     
 
         
-
+'''
 if __name__ == '__main__':
 
     #Luego vemos como pasarlo a bonito
@@ -283,5 +294,5 @@ if __name__ == '__main__':
     rutaIndice = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/Indice" 
     
     tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice)
-    
+'''
 
