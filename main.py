@@ -22,6 +22,7 @@ def elegirComando(comando):
         indice = comandos[3]
         print(comandos)
         Indizacion.tomarArchivos(coleccion,stopwords,indice)
+        return
     
     if comandos[0]=="buscar":
         indice = comandos[1]
@@ -29,8 +30,10 @@ def elegirComando(comando):
         prefijo = comandos[3] #arch. salida
         numDocs = int(comandos[4]) #cant de doc en escalafon mostrados en el .html
         consulta = comandos[5] #texto que se va a consultar
+        return
     else:
         print("El comando no existe\n")
+        return
 
 
 
@@ -46,7 +49,7 @@ def elegirComando(comando):
 
 
 if __name__ == '__main__':
-    #indizar,C:\Users\javir\Desktop\TEC Javi\RIT\TareaProgramada1\Archivo-inverso\xml-es,C:\Users\javir\Desktop\TEC Javi\RIT\TareaProgramada1\Archivo-inverso\StopWords.txt,C:\Users\javir\Desktop\TEC Javi\RIT\TareaProgramada1\output.txt
+    #indizar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1\Archivo-inverso\xml-es,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1\Archivo-inverso\StopWords.txt,coleccion
     #
     comando = input("Ingrese el comando(parametros con comas): ")
     elegirComando(comando)

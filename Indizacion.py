@@ -231,13 +231,13 @@ def guardarIndice(rutaIndice,coleccion,documentos,diccionarioGlobal):
 
 
 def crearIndice(rutaIndice,coleccion,documentos,diccionarioGlobal):
-    with open(rutaIndice+'-'+'coleccion.json', 'w') as c:
+    with open(rutaIndice+'/'+'coleccion.json', 'w') as c:
             json.dump(coleccion, c)
     
-    with open(rutaIndice+'-'+'documentos.json', 'w') as doc:
+    with open(rutaIndice+'/'+'documentos.json', 'w') as doc:
             json.dump(documentos, doc)
     
-    with open(rutaIndice+'-'+'diccionarioGlobal.json', 'w') as dic:
+    with open(rutaIndice+'/'+'diccionarioGlobal.json', 'w') as dic:
             json.dump(diccionarioGlobal, dic)
     
 def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):

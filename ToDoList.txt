@@ -21,7 +21,7 @@ Indización
 
 
 Búsquedas
-5. Volver a hacer BM25 y vectorial para las consultas.
+5. Volver a hacer BM25 y vectorial para las consultas. EN PROCESO(Vectorial)
 6. Escalafón.
 7. Poner la info en html.
 
