@@ -159,16 +159,23 @@ def idf_ijColeccionVect(N, ni):
     '''
     Dado un N y un ni devuelve el resultado del inverse document frequency
     '''
-    return log(N/ni,2)
+    idf = log(N/ni,2)
+    if idf >= 0:
+        return idf
+    else:
+        return 0
 
 
 def idf_ijColeccionBM25(N, ni):
     '''
     Dado un N y un ni devuelve el resultado del inverse document frequency
     '''
-    return log((N-ni+0.5)/(ni+0.5),2)
-
-
+    idf = log((N-ni+0.5)/(ni+0.5),2)
+    if idf >= 0:
+        return idf
+    else:
+        return 0
+    
 
 def calcularPeso(idf_ij,freq_ij):
     '''
@@ -215,7 +222,7 @@ def procesarDiccColeccion(N):
 
 
     #----------------Pruebas----------------------------#
-    '''
+    
     a=0
     for word in diccionarioGlobal:
         if a==76:
@@ -225,7 +232,7 @@ def procesarDiccColeccion(N):
             print('IdfBM25:',diccionarioGlobal[word]["IdfBM25"])
             print('Postings:',diccionarioGlobal[word]["Postings"])
         a+=1
-    '''
+    
     #print(documentos)
     return diccionarioGlobal
     

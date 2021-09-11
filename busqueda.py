@@ -28,7 +28,6 @@ def buscarConsulta(dir,prefijo,numDocs,consulta):
     coleccion = json.load(open(dir+'/'+'coleccion.json','r'))
     diccionarioGlobal = json.load(open(dir+'/'+'diccionarioGlobal.json','r'))
     documentos = json.load(open(dir+'/'+'documentos.json','r'))
-    
     terminos =consulta.split()
     
     #for termino in terminos:
@@ -43,4 +42,5 @@ def buscarConsulta(dir,prefijo,numDocs,consulta):
 
 if __name__ == '__main__':
     ruta = input('ingrese el dir de indice: ')
+    #ruta = 'D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/Indice'
     buscarConsulta(ruta,'vec','4','autores y evolution')
