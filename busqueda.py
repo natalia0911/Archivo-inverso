@@ -2,7 +2,7 @@ import json
 import math
 import operator
 from datetime import datetime
-
+import re
 
 def normaConsulta(vec):
     #Nomral que utiliza la similitud vectorial
@@ -67,24 +67,42 @@ def obtenerPesosConsulta(terminos,pesosTermino,coleccion):
 def crearEscalafon(similitudes,prefijo):
     #escalafon final .esca
     escalafon = open(prefijo+'.esca','w')
-    sortedDic = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)
-    print(sortedDic)
+    print(similitudes)
     pos = 1
-    for doc in sortedDic: 
+    for doc in similitudes: 
         escalafon.write(str(pos)+". "+str(doc)+'\n')
         pos+=1
     escalafon.close()
 
-def crearHTML(similitudes,prefijo,numDocs):
+def crearHTML(similitudes,prefijo,numDocs,documentos):
     html = open(prefijo+'.html','w')
-    html.write(datetime.today().strftime('%A, %B %d, %Y %H:%M:%S'))
+    html.write('<html>\n')
+    html.write('<head>\n<title>Primeros Documentos del Escalafon</title>\n</head>\n')
+    html.write('<body>\n')
+    html.write(datetime.today().strftime('%A, %B %d, %Y %H:%M:%S')+'\n')
 
-    #pos = buscarPosDoc
-    #for doc, sim in similitudes:
-
-
+    pos = 1
+    for doc, sim in similitudes:
+        if numDocs != 0:
+           html.write('Poscision: '+str(pos)+'\n')
+           html.write('Similitud: '+str(sim)+'\n' )
+           ruta = documentos[doc]['path']
+           html.write('Ruta: '+ruta+'\n\n')
+           texto = re.sub(r'<[^<]+>', "",open(ruta,encoding="utf8").read())
+           caracteres = texto[:200]
+           html.write('Primeros 200 caracteres: \n'+caracteres+'\n\n\n')
+           pos = pos+1
+           numDocs = numDocs -1
+        else:
+            html.write('</body>\n')
+            html.write('</html>\n')
+            html.close()
+            return
+    html.write('</body>\n')
+    html.write('</html>\n')
     html.close()
     return
+
 
 def buscarConsulta(dir,prefijo,numDocs,consulta):
 
@@ -102,8 +120,10 @@ def buscarConsulta(dir,prefijo,numDocs,consulta):
     similitudes = simVec(pesosTermino,pesosConsulta,terminos,documentos)
     print(similitudes)
 
+    similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
+
     crearEscalafon(similitudes,prefijo)
-    crearHTML()
+    crearHTML(similitudes,prefijo,numDocs,documentos)
 
 
 
@@ -111,4 +131,4 @@ def buscarConsulta(dir,prefijo,numDocs,consulta):
 
 if __name__ == '__main__':
     ruta = input('ingrese el dir de indice: ')
-    buscarConsulta(ruta,'prueba','4','autores y evolution')
+    buscarConsulta(ruta,'prueba',4,'autores y evolution')

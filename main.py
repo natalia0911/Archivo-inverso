@@ -41,16 +41,6 @@ def elegirComando(comando):
 
 
 
-    
-
- 
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     #indizar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1\Archivo-inverso\xml-es,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1\Archivo-inverso\StopWords.txt,coleccion
