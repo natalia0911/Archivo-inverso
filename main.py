@@ -10,7 +10,7 @@
 
 
 import Indizacion
-
+import busqueda
 
 def elegirComando(comando):
 
@@ -30,6 +30,8 @@ def elegirComando(comando):
         prefijo = comandos[3] #arch. salida
         numDocs = int(comandos[4]) #cant de doc en escalafon mostrados en el .html
         consulta = comandos[5] #texto que se va a consultar
+        busqueda.buscarConsulta(indice,tipo,prefijo, numDocs, consulta)
+
         return
     
     elif comandos[0]=="mostrar":
@@ -44,6 +46,8 @@ def elegirComando(comando):
 
 if __name__ == '__main__':
     #indizar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1\Archivo-inverso\xml-es,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1\Archivo-inverso\StopWords.txt,coleccion
+    #buscar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1_Final\coleccion,vec,prueba,5,autores y evolution
+
     #indizar,D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/xml-es,D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/StopWords.txt,D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/Indice
     comando = input("Ingrese el comando(parametros con comas): ")
     elegirComando(comando)

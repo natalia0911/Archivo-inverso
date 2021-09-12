@@ -104,26 +104,36 @@ def crearHTML(similitudes,prefijo,numDocs,documentos):
     return
 
 
-def buscarConsulta(dir,prefijo,numDocs,consulta):
+def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
 
     coleccion = json.load(open(dir+'/'+'coleccion.json','r'))
     diccionarioGlobal = json.load(open(dir+'/'+'diccionarioGlobal.json','r'))
     documentos = json.load(open(dir+'/'+'documentos.json','r'))
     
     terminos = consulta.split()
-    pesosTermino = obtenerPesos(diccionarioGlobal,terminos) #Dicc de terminos donde traen sus docs y pesos
     
-    pesosConsulta = obtenerPesosConsulta(terminos,pesosTermino,coleccion)    
-    similitudes = {}
-    print(pesosConsulta)
+    if tipo == 'vec': 
+        pesosTermino = obtenerPesos(diccionarioGlobal,terminos) #Dicc de terminos donde traen sus docs y pesos
 
-    similitudes = simVec(pesosTermino,pesosConsulta,terminos,documentos)
-    print(similitudes)
+        pesosConsulta = obtenerPesosConsulta(terminos,pesosTermino,coleccion)    
+        similitudes = {}
+        print(pesosConsulta)
 
-    similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
+        similitudes = simVec(pesosTermino,pesosConsulta,terminos,documentos)
+        print(similitudes)
 
-    crearEscalafon(similitudes,prefijo)
-    crearHTML(similitudes,prefijo,numDocs,documentos)
+        similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
+        crearEscalafon(similitudes,prefijo)
+        crearHTML(similitudes,prefijo,numDocs,documentos)
+
+    elif tipo == 'bm25':
+        return
+    
+    else:
+        print('No existe este tipo de busqueda.\n')
+    
+
+    
 
 
 
@@ -131,4 +141,4 @@ def buscarConsulta(dir,prefijo,numDocs,consulta):
 
 if __name__ == '__main__':
     ruta = input('ingrese el dir de indice: ')
-    buscarConsulta(ruta,'prueba',4,'autores y evolution')
+    buscarConsulta(ruta,'vec','prueba',4,'autores y evolution')
