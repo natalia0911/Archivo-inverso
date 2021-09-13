@@ -8,11 +8,12 @@ def consultar(indice,tipo,dato):
     if tipo == 'ter':
 
         diccionarioGlobal = json.load(open(indice+'/'+'diccionarioGlobal.json','r'))
+        documentos = json.load(open(indice+'/'+'documentos.json','r'))
         queryPostings = ''
         try:
             postings = diccionarioGlobal[dato]['Postings']
             for post in postings:
-                queryPostings = 'Postings: ' + '\n\tDocId: ' + post[0] + '\n\tFrecuencia: ' + str(post[1]) + '\n\tPeso: ' + str(post[2])
+                queryPostings += 'Postings: ' + '\n\tDocId: ' + post[0] + '\n\tRuta relativa: ' + documentos[post[0]]['path'] +'\n\tFrecuencia: ' + str(post[1]) + '\n\tPeso: ' + str(post[2]) + '\n'
 
             query = 'Ni: ' + str(diccionarioGlobal[dato]['Ni']) + '\nIdf vectorial: ' + str(diccionarioGlobal[dato]['Idf'])+ \
             '\nIdf BM25: ' + str(diccionarioGlobal[dato]['IdfBM25']) + '\n' + queryPostings
