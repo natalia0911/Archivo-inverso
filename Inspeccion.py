@@ -1,11 +1,12 @@
 
 import json
+from pathlib import PurePath
 
    
-def buscarConsulta(indice,tipo,dato):
+def consultar(indice,tipo,dato):
 
     if tipo == 'ter':
-        
+
         diccionarioGlobal = json.load(open(indice+'/'+'diccionarioGlobal.json','r'))
         queryPostings = ''
         try:
@@ -22,7 +23,7 @@ def buscarConsulta(indice,tipo,dato):
 
 
     elif tipo == 'doc':
-        
+
         documentos = json.load(open(indice+'/'+'documentos.json','r'))
         query = ''
         for docId in documentos:
@@ -36,7 +37,5 @@ def buscarConsulta(indice,tipo,dato):
 
     else:
         return 'Consulta inválida'
-
-
 
 
