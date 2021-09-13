@@ -4,6 +4,7 @@ import operator
 from datetime import datetime
 import re
 import Indizacion
+import os
 
 
 def normaConsulta(vec):
@@ -110,7 +111,7 @@ def crearHTML(similitudes,prefijo,numDocs,documentos,consulta):
            html.write('<P>') 
            html.write('Posicion: '+str(pos)+'\n'+'<br>')
            html.write('Similitud: '+str(sim)+'\n'+'<br>')
-           ruta = documentos[doc]['path']
+           ruta = os.path.abspath(documentos[doc]['path'])
            html.write('Ruta: '+ruta+'\n\n'+'<br>')
            texto = re.sub(r'<[^<]+>', "",open(ruta,encoding="utf8").read())
            caracteres = texto[:200]

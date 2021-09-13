@@ -48,7 +48,7 @@ def elegirComando(comando):
 
 
 if __name__ == '__main__':
-
+    #buscar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1_Final\coleccion,bm25,qprueba,20,cpu de carga
 
     comando = input("Ingrese el comando(parametros con comas seguidas): ")
     elegirComando(comando)
