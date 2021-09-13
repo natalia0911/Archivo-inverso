@@ -3,7 +3,7 @@ import math
 import operator
 from datetime import datetime
 import re
-
+import Indizacion
 def normaConsulta(vec):
     #Nomral que utiliza la similitud vectorial
     norma =0
@@ -81,18 +81,21 @@ def crearHTML(similitudes,prefijo,numDocs,documentos,consulta):
     html.write('<html>\n')
     html.write('<head>\n<title>Primeros Documentos del Escalafon</title>\n</head>\n')
     html.write('<body>\n')
-    html.write(datetime.today().strftime('%A, %B %d, %Y %H:%M:%S')+'\n')
-    html.write('Consulta: '+ consulta+'\n')
+    html.write(datetime.today().strftime('%A, %B %d, %Y %H:%M:%S')+'\n'+'<br>')
+    html.write('Consulta: '+ consulta+'\n\n\n'+'<br>')
     pos = 1
     for doc, sim in similitudes:
         if numDocs != 0:
-           html.write('Poscision: '+str(pos)+'\n')
-           html.write('Similitud: '+str(sim)+'\n' )
+           html.write('<H1>'+doc+'</H1>')
+           html.write('<P>') 
+           html.write('Posicion: '+str(pos)+'\n'+'<br>')
+           html.write('Similitud: '+str(sim)+'\n'+'<br>')
            ruta = documentos[doc]['path']
-           html.write('Ruta: '+ruta+'\n\n')
+           html.write('Ruta: '+ruta+'\n\n'+'<br>')
            texto = re.sub(r'<[^<]+>', "",open(ruta,encoding="utf8").read())
            caracteres = texto[:200]
            html.write('Primeros 200 caracteres: \n'+caracteres+'\n\n\n')
+           html.write('</P>')
            pos = pos+1
            numDocs = numDocs -1
         else:
@@ -136,7 +139,15 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
     diccionarioGlobal = json.load(open(dir+'/'+'diccionarioGlobal.json','r'))
     documentos = json.load(open(dir+'/'+'documentos.json','r'))
     
-    terminos = consulta.split()
+    terminos = consulta.lower()
+    terminos = terminos.split()
+    
+
+    caracteres = "!?'-[]()\/''=`,:~}{" #-> caracteres innecesarios que se quitan 
+    terminos = ''.join(x for x in terminos if x not in caracteres)
+
+
+    terminos = Indizacion.deleteAccents(terminos)
     similitudes = {}
 
     if tipo == 'vec': 
