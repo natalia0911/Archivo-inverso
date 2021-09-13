@@ -180,6 +180,27 @@ def procesarDiccColeccion():
     return diccionarioGlobal
 
 
+<<<<<<< Updated upstream:pruebaXML.py
+=======
+    else:
+        os.makedirs(rutaIndice)
+        crearIndice(rutaIndice,coleccion,documentos,diccionarioGlobal)
+
+
+
+def crearIndice(rutaIndice,coleccion,documentos,diccionarioGlobal):
+    with open(rutaIndice+'/'+'coleccion.json', 'w') as c:
+            json.dump(coleccion, c)
+    
+    with open(rutaIndice+'/'+'documentos.json', 'w') as doc:
+            json.dump(documentos, doc)
+    
+    with open(rutaIndice+'/'+'diccionarioGlobal.json', 'w') as dic:
+            json.dump(diccionarioGlobal, dic)
+            
+    
+def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):
+>>>>>>> Stashed changes:Indizacion.py
     
 def tomarArchivos():
     global docId
@@ -202,6 +223,7 @@ def tomarArchivos():
     calcularIdf_ij(N)   #Recorre el diccionario para calcular idfs
     procesarDiccColeccion()
 
+<<<<<<< Updated upstream:pruebaXML.py
         
 
 if __name__ == '__main__':
@@ -218,3 +240,8 @@ if __name__ == '__main__':
     diccionarioGlobal = {}     # Ni, Idfs, *postings ---> [(doc1,long,peso),(doc2,long,peso),...]
     tomarArchivos()
 
+=======
+    guardarIndice(rutaIndice,coleccion,documentos,diccionarioGlobal)
+    
+    
+>>>>>>> Stashed changes:Indizacion.py
