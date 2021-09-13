@@ -76,13 +76,13 @@ def crearEscalafon(similitudes,prefijo):
         pos+=1
     escalafon.close()
 
-def crearHTML(similitudes,prefijo,numDocs,documentos):
+def crearHTML(similitudes,prefijo,numDocs,documentos,consulta):
     html = open(prefijo+'.html','w')
     html.write('<html>\n')
     html.write('<head>\n<title>Primeros Documentos del Escalafon</title>\n</head>\n')
     html.write('<body>\n')
     html.write(datetime.today().strftime('%A, %B %d, %Y %H:%M:%S')+'\n')
-
+    html.write('Consulta: '+ consulta+'\n')
     pos = 1
     for doc, sim in similitudes:
         if numDocs != 0:
@@ -151,7 +151,7 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
 
         similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
         crearEscalafon(similitudes,prefijo)
-        crearHTML(similitudes,prefijo,numDocs,documentos)
+        crearHTML(similitudes,prefijo,numDocs,documentos,consulta)
         return
 
     elif tipo == 'bm25':
@@ -160,7 +160,7 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
 
         similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
         crearEscalafon(similitudes,prefijo)
-        crearHTML(similitudes,prefijo,numDocs,documentos)
+        crearHTML(similitudes,prefijo,numDocs,documentos,consulta)
         return
     
     else:
