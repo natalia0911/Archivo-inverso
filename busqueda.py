@@ -4,14 +4,21 @@ import operator
 from datetime import datetime
 import re
 import Indizacion
+
+
 def normaConsulta(vec):
-    #Nomral que utiliza la similitud vectorial
+    '''
+    Norma que utiliza la similitud vectorial
+    '''
     norma =0
     for i in vec:
         norma+= vec[i]*vec[i]
     return math.sqrt(norma)
 
 def crearDict(pesosTermino):
+    '''
+    Devuelve un diccionario
+    '''
     dict = {}
     for termino in pesosTermino:
         for doc in pesosTermino[termino]:
@@ -21,13 +28,15 @@ def crearDict(pesosTermino):
 
 def simVec2(similitudes, pesosConsulta,documentos):
     for doc in similitudes:
-        print(str(doc)+'   '+str(similitudes[doc])+'  '+str(normaConsulta(pesosConsulta))+'   '+str(documentos[doc]['norma']))
+        #print(str(doc)+'   '+str(similitudes[doc])+'  '+str(normaConsulta(pesosConsulta))+'   '+str(documentos[doc]['norma']))
         similitudes[doc]= similitudes[doc]/(normaConsulta(pesosConsulta)*documentos[doc]['norma'])
-        print(str(similitudes[doc]))
+        #print(str(similitudes[doc]))
     return similitudes
     
 def simVec(pesosTermino, pesosConsulta, terminos, documentos):
-    #similitud vectorial 
+    '''
+    similitud vectorial
+    ''' 
     
     similitudes = crearDict(pesosTermino)
     for termino in terminos:
@@ -42,7 +51,9 @@ def simVec(pesosTermino, pesosConsulta, terminos, documentos):
 
 
 def obtenerPesos(diccionarioGlobal,terminos):
-    #retorna los pesos de los doc donde se encuentra el termino, y el indice del doc
+    '''
+    Retorna los pesos de los doc donde se encuentra el termino, y el indice del doc
+    '''
     resultado = {}
     
     for termino in terminos:
@@ -57,6 +68,10 @@ def obtenerPesos(diccionarioGlobal,terminos):
     return resultado
 
 def obtenerPesosConsulta(terminos,pesosTermino,coleccion):
+    '''
+    Obtener los pesos de los terminos de la consulta
+    '''
+
     resultado = {}
     for termino in terminos:
        if termino in pesosTermino: 
@@ -67,7 +82,9 @@ def obtenerPesosConsulta(terminos,pesosTermino,coleccion):
 
 
 def crearEscalafon(similitudes,prefijo):
-    #escalafon final .esca
+    '''
+    Crear archivo del escalafon con extension .esca
+    '''
     escalafon = open(prefijo+'.esca','w')
     print(similitudes)
     pos = 1
@@ -77,6 +94,9 @@ def crearEscalafon(similitudes,prefijo):
     escalafon.close()
 
 def crearHTML(similitudes,prefijo,numDocs,documentos,consulta):
+    '''
+    Crear archivo HTML 
+    '''
     html = open(prefijo+'.html','w')
     html.write('<html>\n')
     html.write('<head>\n<title>Primeros Documentos del Escalafon</title>\n</head>\n')
@@ -125,6 +145,9 @@ def obtenerDocs(consultas,diccionarioGlobal):
 
 
 def simBM25(docs,coleccion,documentos,diccionarioGlobal):
+    '''
+    Obtener las similitudes para una coleccion de archivos con el modelo BM25
+    '''
     similitudes = crearDict(docs)
     for termino in docs:
         for doc in docs[termino]:
@@ -152,14 +175,13 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
 
     if tipo == 'vec': 
         pesosTermino = obtenerPesos(diccionarioGlobal,terminos) #Dicc de terminos donde traen sus docs y pesos
-
         pesosConsulta = obtenerPesosConsulta(terminos,pesosTermino,coleccion)    
     
-        print(pesosConsulta)
-        print(pesosTermino)
+        #print(pesosConsulta)
+        #print(pesosTermino)
         similitudes = simVec(pesosTermino,pesosConsulta,terminos,documentos)
-        print(similitudes)
-
+        #print(similitudes)
+        #Similitudes ordenadas es el escalafón
         similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
         crearEscalafon(similitudes,prefijo)
         crearHTML(similitudes,prefijo,numDocs,documentos,consulta)
@@ -168,7 +190,7 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
     elif tipo == 'bm25':
         docsFrec = obtenerDocs(terminos,diccionarioGlobal)
         similitudes = simBM25(docsFrec,coleccion,documentos,diccionarioGlobal)
-
+        #Similitudes ordenadas es el escalafón
         similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
         crearEscalafon(similitudes,prefijo)
         crearHTML(similitudes,prefijo,numDocs,documentos,consulta)
@@ -177,10 +199,3 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
     else:
         print('No existe este tipo de busqueda.\n')
     
-
-
-#Parametro -> ruta del directorio donde se encuentran los json
-
-if __name__ == '__main__':
-    ruta = input('ingrese el dir de indice: ')
-    buscarConsulta(ruta,'vec','prueba',4,'autores y evolution')

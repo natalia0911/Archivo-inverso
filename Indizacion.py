@@ -285,13 +285,4 @@ def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):
 
     guardarIndice(rutaIndice,coleccion,documentos,diccionarioGlobal)
     
-    
-'''
-#OJO, PEDIR ESTOO
-rutaColeccion = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/xml-es"
-rutaStopwords = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/StopWords.txt"
-rutaIndice = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/Indice" 
-    
-tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice)
-'''
 
