@@ -11,6 +11,7 @@
 import re
 from unicodedata import normalize
 from pathlib import Path
+from pathlib import PurePath
 from math import log
 from math import sqrt
 import json
@@ -57,12 +58,8 @@ def formatearTexto(ruta):
 
 
     texto = deleteAccents(texto)
-    return quitarPreposiciones(texto)
+    return re.split(r'\W+', texto) #Dividir por palabras
     
-    #TXT de prueba donde muestra como queda(Faltan detalles) doc prueba: apx-authors.xml
-    #with open("output.txt", "w") as f:
-    #    f.write(texto)
-
 
 def deleteAccents(text):
     '''
@@ -77,12 +74,6 @@ def deleteAccents(text):
 
     return text
 
-
-def quitarPreposiciones(texto):
-
-    #Aqui hacer algo para quitar las presiones necesarias
-    #De momento separa en palabras
-    return re.split(r'\W+', texto)     #Dividir por palabras
 
     
 def countWords(words):
@@ -222,7 +213,7 @@ def procesarDiccColeccion(N):
 
 
     #----------------Pruebas----------------------------#
-    
+    '''
     a=0
     for word in diccionarioGlobal:
         if a==76:
@@ -234,6 +225,7 @@ def procesarDiccColeccion(N):
         a+=1
     
     #print(documentos)
+    '''
     return diccionarioGlobal
     
 
@@ -263,14 +255,15 @@ def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):
     global documentos
     global diccionarioGlobal
     global coleccion
-    
-    coleccion['rutaAbsoluta']= rutaColeccion
+
+    rutaColeccion = PurePath(rutaColeccion)
+    coleccion['rutaAbsoluta']= str(rutaColeccion)
     leerStopWords(rutaStopwords)
     pathlist = Path(rutaColeccion).glob('**/*.xml')
     
     for path in pathlist:
         docIdentifier = "doc"+str(docId)
-        insertarEnDocumentos(path,docIdentifier)
+        insertarEnDocumentos(path.relative_to(rutaColeccion),docIdentifier)
         texto = formatearTexto(path)
         dicc = countWords(texto)
         insertarEndiccionarioGlobal(dicc,docIdentifier)
@@ -285,13 +278,4 @@ def tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice):
 
     guardarIndice(rutaIndice,coleccion,documentos,diccionarioGlobal)
     
-    
-'''
-#OJO, PEDIR ESTOO
-rutaColeccion = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/xml-es"
-rutaStopwords = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/StopWords.txt"
-rutaIndice = "D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/Indice" 
-    
-tomarArchivos(rutaColeccion,rutaStopwords,rutaIndice)
-'''
 

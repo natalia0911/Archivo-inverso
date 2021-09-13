@@ -1,11 +1,12 @@
 
 import json
+from pathlib import PurePath
 
    
-def buscarConsulta(indice,tipo,dato):
+def consultar(indice,tipo,dato):
 
     if tipo == 'ter':
-        
+
         diccionarioGlobal = json.load(open(indice+'/'+'diccionarioGlobal.json','r'))
         queryPostings = ''
         try:
@@ -18,11 +19,11 @@ def buscarConsulta(indice,tipo,dato):
             return query
         
         except KeyError:
-            return 'Dato no existente'
+            return 'Término no existente'
 
 
     elif tipo == 'doc':
-        
+
         documentos = json.load(open(indice+'/'+'documentos.json','r'))
         query = ''
         for docId in documentos:
@@ -32,19 +33,9 @@ def buscarConsulta(indice,tipo,dato):
         if query != '':
             return query
         else:
-            return 'Dato no existente'
+            return 'Documento consultado no existente'
 
     else:
         return 'Consulta inválida'
 
 
-
-
-if __name__ == '__main__':
-
-    indice = 'D:/2 SEMESTRE 2021/RIT/PROYECTOS/Proyecto 1/Archivo-inverso/Indice'
-    print(buscarConsulta(indice,'ter',"tantoss"))
-    #ter o doc
-    dato = "D:\\2 SEMESTRE 2021\\RIT\\PROYECTOS\\Proyecto 1\\Archivo-inverso\\xml-es\\xml-es\\help-translate.xml"
-    print(buscarConsulta(indice,'doc',dato))
-    
