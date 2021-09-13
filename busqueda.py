@@ -16,12 +16,14 @@ def crearDict(pesosTermino):
     for termino in pesosTermino:
         for doc in pesosTermino[termino]:
             dict[doc[0]] = 0
-    print(dict)
+
     return dict
 
 def simVec2(similitudes, pesosConsulta,documentos):
-    for similitud in similitudes:
-        similitudes[similitud]= similitudes[similitud]/normaConsulta(pesosConsulta)*documentos[similitud]['norma']
+    for doc in similitudes:
+        print(str(doc)+'   '+str(similitudes[doc])+'  '+str(normaConsulta(pesosConsulta))+'   '+str(documentos[doc]['norma']))
+        similitudes[doc]= similitudes[doc]/(normaConsulta(pesosConsulta)*documentos[doc]['norma'])
+        print(str(similitudes[doc]))
     return similitudes
     
 def simVec(pesosTermino, pesosConsulta, terminos, documentos):
@@ -31,9 +33,9 @@ def simVec(pesosTermino, pesosConsulta, terminos, documentos):
     for termino in terminos:
         if termino in pesosTermino:
             for w in pesosTermino[termino]:
-                sim = 0
-                sim+=w[1]*pesosConsulta[termino]
-                similitudes[w[0]]+= sim
+                print('Similitud '+w[0]+' =' +str(w[1])+'   '+str(pesosConsulta[termino]))
+                
+                similitudes[w[0]]+=w[1]*pesosConsulta[termino]
 
     similitudes = simVec2(similitudes,pesosConsulta,documentos)
     return similitudes
@@ -58,8 +60,8 @@ def obtenerPesosConsulta(terminos,pesosTermino,coleccion):
     resultado = {}
     for termino in terminos:
        if termino in pesosTermino: 
-        peso = math.log(1+terminos.count(termino),2)*math.log(coleccion['N']/len(pesosTermino[termino]),2) 
-        resultado[termino] = peso
+           peso = math.log(1+terminos.count(termino),2)*math.log(coleccion['N']/len(pesosTermino[termino]),2) 
+           resultado[termino] = peso
     return resultado
 
 
@@ -104,6 +106,30 @@ def crearHTML(similitudes,prefijo,numDocs,documentos):
     return
 
 
+def obtenerDocs(consultas,diccionarioGlobal):
+    resultado = {}
+    for consulta in consultas:
+        frec=[]
+        if consulta in diccionarioGlobal:
+            for peso in diccionarioGlobal[consulta]['Postings']:
+                doc = []
+                doc.append(peso[0])
+                doc.append(peso[1])
+                frec.append(doc)   
+            resultado[consulta] = frec       
+    return resultado
+
+
+
+def simBM25(docs,coleccion,documentos,diccionarioGlobal):
+    similitudes = crearDict(docs)
+    for termino in docs:
+        for doc in docs[termino]:
+            similitudes[doc[0]]+= diccionarioGlobal[termino]['IdfBM25']*((doc[1]*(1.2+1))/(doc[1]+1.2*(1-0.75+1*(documentos[doc[0]]['length']/coleccion['AvgLen']))))
+
+    return similitudes
+
+
 def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
 
     coleccion = json.load(open(dir+'/'+'coleccion.json','r'))
@@ -111,30 +137,35 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
     documentos = json.load(open(dir+'/'+'documentos.json','r'))
     
     terminos = consulta.split()
-    
+    similitudes = {}
+
     if tipo == 'vec': 
         pesosTermino = obtenerPesos(diccionarioGlobal,terminos) #Dicc de terminos donde traen sus docs y pesos
 
         pesosConsulta = obtenerPesosConsulta(terminos,pesosTermino,coleccion)    
-        similitudes = {}
+    
         print(pesosConsulta)
-
+        print(pesosTermino)
         similitudes = simVec(pesosTermino,pesosConsulta,terminos,documentos)
         print(similitudes)
 
         similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
         crearEscalafon(similitudes,prefijo)
         crearHTML(similitudes,prefijo,numDocs,documentos)
+        return
 
     elif tipo == 'bm25':
+        docsFrec = obtenerDocs(terminos,diccionarioGlobal)
+        similitudes = simBM25(docsFrec,coleccion,documentos,diccionarioGlobal)
+
+        similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
+        crearEscalafon(similitudes,prefijo)
+        crearHTML(similitudes,prefijo,numDocs,documentos)
         return
     
     else:
         print('No existe este tipo de busqueda.\n')
     
-
-    
-
 
 
 #Parametro -> ruta del directorio donde se encuentran los json
