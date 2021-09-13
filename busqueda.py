@@ -140,15 +140,13 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
     documentos = json.load(open(dir+'/'+'documentos.json','r'))
     
     terminos = consulta.lower()
+    terminos = Indizacion.deleteAccents(terminos)
+
     terminos = terminos.split()
     
-
-    caracteres = "!?'-[]()\/''=`,:~}{" #-> caracteres innecesarios que se quitan 
-    terminos = ''.join(x for x in terminos if x not in caracteres)
-
-
-    terminos = Indizacion.deleteAccents(terminos)
     similitudes = {}
+
+    print(terminos)
 
     if tipo == 'vec': 
         pesosTermino = obtenerPesos(diccionarioGlobal,terminos) #Dicc de terminos donde traen sus docs y pesos
