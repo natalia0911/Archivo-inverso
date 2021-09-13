@@ -134,7 +134,7 @@ def simBM25(docs,coleccion,documentos,diccionarioGlobal):
 
 
 def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
-
+    
     coleccion = json.load(open(dir+'/'+'coleccion.json','r'))
     diccionarioGlobal = json.load(open(dir+'/'+'diccionarioGlobal.json','r'))
     documentos = json.load(open(dir+'/'+'documentos.json','r'))
