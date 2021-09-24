@@ -94,7 +94,7 @@ def crearEscalafon(similitudes,prefijo):
         pos+=1
     escalafon.close()
 
-def crearHTML(similitudes,prefijo,numDocs,documentos,consulta):
+def crearHTML(similitudes,prefijo,numDocs,documentos,coleccion,consulta):
     '''
     Crear archivo HTML 
     '''
@@ -111,7 +111,7 @@ def crearHTML(similitudes,prefijo,numDocs,documentos,consulta):
            html.write('<P>') 
            html.write('Posicion: '+str(pos)+'\n'+'<br>')
            html.write('Similitud: '+str(sim)+'\n'+'<br>')
-           ruta = os.path.abspath(documentos[doc]['path'])
+           ruta = coleccion['rutaAbsoluta']+'/'+documentos[doc]['path']
            html.write('Ruta: '+ruta+'\n\n'+'<br>')
            texto = re.sub(r'<[^<]+>', "",open(ruta,encoding="utf8").read())
            caracteres = texto[:200]
@@ -183,7 +183,7 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
         #Similitudes ordenadas es el escalafón
         similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
         crearEscalafon(similitudes,prefijo)
-        crearHTML(similitudes,prefijo,numDocs,documentos,consulta)
+        crearHTML(similitudes,prefijo,numDocs,documentos,coleccion,consulta)
         return
 
     elif tipo == 'bm25':
@@ -192,7 +192,7 @@ def buscarConsulta(dir,tipo,prefijo,numDocs,consulta):
         #Similitudes ordenadas es el escalafón
         similitudes = sorted(similitudes.items(),key=operator.itemgetter(1),reverse=True)#Orden descendente
         crearEscalafon(similitudes,prefijo)
-        crearHTML(similitudes,prefijo,numDocs,documentos,consulta)
+        crearHTML(similitudes,prefijo,numDocs,documentos,coleccion,consulta)
         return
     
     else:

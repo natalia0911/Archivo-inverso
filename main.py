@@ -48,8 +48,9 @@ def elegirComando(comando):
 
 
 if __name__ == '__main__':
-    #buscar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1_Final\coleccion,bm25,qprueba,20,cpu de carga
-
+    #buscar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1_Final\index2,vec,qvec_imp,20,impuestos y depreciacion
+    #buscar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1_Final\index2,bm25,qbm25_conf,60,configuración de un servidor de correo
+    #indizar,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1_Final\Archivo-inverso\xml-es,C:\Users\javir\Desktop\TEC Javi\RIT\Proyecto1_Final\Archivo-inverso\StopWords.txt,index2
     comando = input("Ingrese el comando(parametros con comas seguidas): ")
     elegirComando(comando)
 
